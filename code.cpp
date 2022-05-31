@@ -28,19 +28,25 @@ void getHeader(fstream &file, int &width, int &height, int &maxChroma){
     maxChroma = stoi(line); 
 }
 
+/**
+ * ヘッダー行の書き込み
+ */ 
 void writeHeader(fstream &file, int width, int height, int maxChroma){
-    file << "";
+    file << "P6" << endl;
+    file << width << " " << height << endl;
+    file << maxChroma << endl;
 }
 
 int main(){
     string READ_FILE = "./test.ppm";
     string WRITE_FILE = "./out_test.ppm";
 
+    //参照するファイル
     fstream readFile(READ_FILE, ios::in|ios::binary);
     if(!readFile.is_open()){
         return EXIT_FAILURE;
     }
-
+    //ヘッダー読み込み
     int width, height, maxChroma = 0;
     getHeader(readFile, width, height, maxChroma);   
     if(width == 0 || height == 0){
@@ -48,11 +54,25 @@ int main(){
     }
 
     //ファイル書き込み
-    fstream writeFile;
-    writeFile.open(WRITE_FILE, ios::in|ios::binary);
-    writeHeader(writeFile, width, height, maxChroma);
+    // fstream beforeWriteFile(WRITE_FILE);
+    // if(beforeWriteFile.is_open()){
+    //     //ファイル削除
+    //     remove(WRITE_FILE.c_str());
+    // }
+    // fstream writeFile;
+    // writeFile.open(WRITE_FILE, ios::out|ios::binary);
+    // writeHeader(writeFile, width, height, maxChroma);
 
-    writeFile.close();
+    //内容
+    char part;
+    while(readFile.read((char*)&part, 1)){
+        int a = part;
+        char c = 'a';
+        int b = 1;
+    }
+
+
+    //writeFile.close();
 
 
     readFile.close();
