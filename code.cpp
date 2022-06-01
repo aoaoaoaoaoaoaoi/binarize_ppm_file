@@ -38,8 +38,8 @@ void writeHeader(fstream &file, int width, int height, int maxChroma){
 }
 
 int main(){
-    string READ_FILE = "./test.ppm";
-    string WRITE_FILE = "./out_test.ppm";
+    const string READ_FILE = "./test.ppm";
+    const string WRITE_FILE = "./out_test.ppm";
 
     //参照するファイル
     fstream readFile(READ_FILE, ios::in|ios::binary);
@@ -54,27 +54,35 @@ int main(){
     }
 
     //ファイル書き込み
-    // fstream beforeWriteFile(WRITE_FILE);
-    // if(beforeWriteFile.is_open()){
-    //     //ファイル削除
-    //     remove(WRITE_FILE.c_str());
-    // }
-    // fstream writeFile;
-    // writeFile.open(WRITE_FILE, ios::out|ios::binary);
-    // writeHeader(writeFile, width, height, maxChroma);
+    fstream beforeWriteFile(WRITE_FILE);
+    if(beforeWriteFile.is_open()){
+        //ファイル削除
+        remove(WRITE_FILE.c_str());
+    }
+    fstream writeFile;
+    writeFile.open(WRITE_FILE, ios::out|ios::binary);
+    writeHeader(writeFile, width, height, maxChroma);
 
     //内容
-    char part;
-    while(readFile.read((char*)&part, 1)){
-        int a = part;
-        char c = 'a';
-        int b = 1;
+    unsigned char p;
+    const int RGB_COUNT = 3;
+    //黒と白の区切り
+    const int VALUE = 205;
+    int sum = 0;
+    int c = 0;
+    while(readFile.read((char*)&p, sizeof p)){
+        sum += (int)p;
+        if(++c % RGB_COUNT == 0){
+            unsigned char wr = (VALUE < (sum / RGB_COUNT)) ? 255 : 0;
+            sum = 0;
+            c = 0;
+            for(int i=0; i < RGB_COUNT; ++i){
+                writeFile << wr;
+            }
+        }
     }
 
-
-    //writeFile.close();
-
-
+    writeFile.close();
     readFile.close();
     return 0;    
 }
